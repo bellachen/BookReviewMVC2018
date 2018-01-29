@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="BookReviewDbModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Author">
+    <Key>
+      <PropertyRef Name="AuthorKey" />
+    </Key>
+    <Property Name="AuthorKey" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AuthorName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Books" Relationship="Self.AuthorBook" FromRole="Author" ToRole="Book" />
+  </EntityType>
+  <EntityType Name="Book">
+    <Key>
+      <PropertyRef Name="BookKey" />
+    </Key>
+    <Property Name="BookKey" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BookTitle" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="BookEntryDate" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="BookISBN" Type="String" MaxLength="13" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Reviews" Relationship="Self.FK_BookRev" FromRole="Book" ToRole="Review" />
+    <NavigationProperty Name="Authors" Relationship="Self.AuthorBook" FromRole="Book" ToRole="Author" />
+    <NavigationProperty Name="Categories" Relationship="Self.BookCategory" FromRole="Book" ToRole="Category" />
+  </EntityType>
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="CategoryKey" />
+    </Key>
+    <Property Name="CategoryKey" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="CategoryName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Books" Relationship="Self.BookCategory" FromRole="Category" ToRole="Book" />
+  </EntityType>
+  <EntityType Name="CheckinLog">
+    <Key>
+      <PropertyRef Name="CheckInLogKey" />
+    </Key>
+    <Property Name="CheckInLogKey" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ReviewerKey" Type="Int32" Nullable="false" />
+    <Property Name="CheckinDateTime" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="Reviewer" Relationship="Self.FK_ReviewerCheckIn" FromRole="CheckinLog" ToRole="Reviewer" />
+  </EntityType>
+  <EntityType Name="Review">
+    <Key>
+      <PropertyRef Name="ReviewKey" />
+    </Key>
+    <Property Name="ReviewKey" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="BookKey" Type="Int32" Nullable="false" />
+    <Property Name="ReviewerKey" Type="Int32" Nullable="false" />
+    <Property Name="ReviewDate" Type="DateTime" Nullable="false" Precision="0" />
+    <Property Name="ReviewTitle" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="ReviewRating" Type="Int32" Nullable="false" />
+    <Property Name="ReviewText" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Book" Relationship="Self.FK_BookRev" FromRole="Review" ToRole="Book" />
+    <NavigationProperty Name="Reviewer" Relationship="Self.Fk_Reviewer" FromRole="Review" ToRole="Reviewer" />
+  </EntityType>
+  <EntityType Name="Reviewer">
+    <Key>
+      <PropertyRef Name="ReviewerKey" />
+    </Key>
+    <Property Name="ReviewerKey" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="ReviewerUserName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ReviewerFirstName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="ReviewerLastName" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ReviewerEmail" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ReviewerKeyCode" Type="Int32" Nullable="false" />
+    <Property Name="ReviewPlainPassword" Type="String" MaxLength="255" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ReviewerHashedPass" Type="Binary" MaxLength="500" FixedLength="false" Nullable="false" />
+    <Property Name="ReviewerDateEntered" Type="DateTime" Precision="0" />
+    <NavigationProperty Name="CheckinLogs" Relationship="Self.FK_ReviewerCheckIn" FromRole="Reviewer" ToRole="CheckinLog" />
+    <NavigationProperty Name="Reviews" Relationship="Self.Fk_Reviewer" FromRole="Reviewer" ToRole="Review" />
+  </EntityType>
+  <Association Name="FK_BookRev">
+    <End Role="Book" Type="Self.Book" Multiplicity="1" />
+    <End Role="Review" Type="Self.Review" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Book">
+        <PropertyRef Name="BookKey" />
+      </Principal>
+      <Dependent Role="Review">
+        <PropertyRef Name="BookKey" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_ReviewerCheckIn">
+    <End Role="Reviewer" Type="Self.Reviewer" Multiplicity="1" />
+    <End Role="CheckinLog" Type="Self.CheckinLog" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Reviewer">
+        <PropertyRef Name="ReviewerKey" />
+      </Principal>
+      <Dependent Role="CheckinLog">
+        <PropertyRef Name="ReviewerKey" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="Fk_Reviewer">
+    <End Role="Reviewer" Type="Self.Reviewer" Multiplicity="1" />
+    <End Role="Review" Type="Self.Review" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Reviewer">
+        <PropertyRef Name="ReviewerKey" />
+      </Principal>
+      <Dependent Role="Review">
+        <PropertyRef Name="ReviewerKey" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="AuthorBook">
+    <End Role="Author" Type="Self.Author" Multiplicity="*" />
+    <End Role="Book" Type="Self.Book" Multiplicity="*" />
+  </Association>
+  <Association Name="BookCategory">
+    <End Role="Book" Type="Self.Book" Multiplicity="*" />
+    <End Role="Category" Type="Self.Category" Multiplicity="*" />
+  </Association>
+  <EntityContainer Name="BookReviewDbEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Authors" EntityType="Self.Author" />
+    <EntitySet Name="Books" EntityType="Self.Book" />
+    <EntitySet Name="Categories" EntityType="Self.Category" />
+    <EntitySet Name="CheckinLogs" EntityType="Self.CheckinLog" />
+    <EntitySet Name="Reviews" EntityType="Self.Review" />
+    <EntitySet Name="Reviewers" EntityType="Self.Reviewer" />
+    <AssociationSet Name="FK_BookRev" Association="Self.FK_BookRev">
+      <End Role="Book" EntitySet="Books" />
+      <End Role="Review" EntitySet="Reviews" />
+    </AssociationSet>
+    <AssociationSet Name="FK_ReviewerCheckIn" Association="Self.FK_ReviewerCheckIn">
+      <End Role="Reviewer" EntitySet="Reviewers" />
+      <End Role="CheckinLog" EntitySet="CheckinLogs" />
+    </AssociationSet>
+    <AssociationSet Name="Fk_Reviewer" Association="Self.Fk_Reviewer">
+      <End Role="Reviewer" EntitySet="Reviewers" />
+      <End Role="Review" EntitySet="Reviews" />
+    </AssociationSet>
+    <AssociationSet Name="AuthorBook" Association="Self.AuthorBook">
+      <End Role="Author" EntitySet="Authors" />
+      <End Role="Book" EntitySet="Books" />
+    </AssociationSet>
+    <AssociationSet Name="BookCategory" Association="Self.BookCategory">
+      <End Role="Book" EntitySet="Books" />
+      <End Role="Category" EntitySet="Categories" />
+    </AssociationSet>
+    <FunctionImport Name="usp_NewReviewer">
+      <Parameter Name="ReviewerUserName" Mode="In" Type="String" />
+      <Parameter Name="ReviewerFirstName" Mode="In" Type="String" />
+      <Parameter Name="ReviewerLastName" Mode="In" Type="String" />
+      <Parameter Name="ReviewerEmail" Mode="In" Type="String" />
+      <Parameter Name="ReviewPlainPassword" Mode="In" Type="String" />
+    </FunctionImport>
+    <FunctionImport Name="usp_ReviewerLogin">
+      <Parameter Name="ReviewerUserName" Mode="In" Type="String" />
+      <Parameter Name="ReviewerPassword" Mode="In" Type="String" />
+    </FunctionImport>
+  </EntityContainer>
+</Schema>
