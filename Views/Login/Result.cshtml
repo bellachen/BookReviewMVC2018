@@ -1,0 +1,16 @@
+﻿@model BookReviewMVC2018_VersionB.Models.LoginClass
+@{
+    ViewBag.Title = "Result";
+}
+
+<h2>Result</h2>
+
+@if (Model.ReviewerKey != 0)
+{
+    <p>Welcome, @Html.DisplayFor(mode => Model.UserName), Please feel free to review a book.</p>
+}
+else
+{
+    <p>Invalid login, please try to login again or register as a Reviewer.</p>
+}
+
